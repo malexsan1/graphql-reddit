@@ -1,0 +1,32 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js start
+
+PATH: 
+  /usr/local/opt/openssl/bin:/Users/alexandrumunt/.local/bin:/usr/local/opt/android-sdk/build-tools/25.0.0:/usr/local/opt/android-sdk/build-tools/24.0.3:/usr/local/opt/android-sdk/build-tools/24.0.2:/usr/local/opt/android-sdk/build-tools/24.0.1:/usr/local/opt/android-sdk/build-tools/24.0.0:/usr/local/opt/android-sdk/build-tools/23.0.3:/usr/local/opt/android-sdk/build-tools/23.0.2:/usr/local/opt/android-sdk/build-tools/23.0.1:/usr/local/opt/android-sdk/build-tools/22.0.1:/usr/local/opt/android-sdk/build-tools/21.1.2:/usr/local/opt/android-sdk/build-tools/19.1.0:/usr/local/opt/android-sdk/platforms-tools:/usr/local/opt/android-sdk/tools:/usr/local/opt/gradle/bin:/usr/local/opt/maven/bin:/usr/local/opt/ant/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/opt/openssl/bin:/Users/alexandrumunt/.local/bin:/usr/local/opt/android-sdk/build-tools/25.0.0:/usr/local/opt/android-sdk/build-tools/24.0.3:/usr/local/opt/android-sdk/build-tools/24.0.2:/usr/local/opt/android-sdk/build-tools/24.0.1:/usr/local/opt/android-sdk/build-tools/24.0.0:/usr/local/opt/android-sdk/build-tools/23.0.3:/usr/local/opt/android-sdk/build-tools/23.0.2:/usr/local/opt/android-sdk/build-tools/23.0.1:/usr/local/opt/android-sdk/build-tools/22.0.1:/usr/local/opt/android-sdk/build-tools/21.1.2:/usr/local/opt/android-sdk/build-tools/19.1.0:/usr/local/opt/android-sdk/platforms-tools:/usr/local/opt/android-sdk/tools:/usr/local/opt/gradle/bin:/usr/local/opt/maven/bin:/usr/local/opt/ant/bin:/Users/alexandrumunt/golang:/usr/local/opt/go/libexec/bin:/Users/alexandrumunt/golang:/usr/local/opt/go/libexec/bin
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  8.9.1
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Couldn't find a package.json file in "/Users/alexandrumunt/Projects/Learning/reddit-clone"
+      at new MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:40048:15
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:98:30)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:109:13
+      at <anonymous>
