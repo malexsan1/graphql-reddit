@@ -18,7 +18,7 @@ const Posts = ({ goToAddPost, goToComments }) => (
         ) : (
           <PostsContainer>
             {posts.map(p => (
-              <Post goToComments={goToComments(p.id)} key={p.id} {...p} />
+              <Post goToComments={goToComments(p)} key={p.id} {...p} />
             ))}
           </PostsContainer>
         )
@@ -32,8 +32,10 @@ export default compose(
     goToAddPost: ({ history: { push } }) => () => {
       push(`/add-post`)
     },
-    goToComments: ({ history: { push } }) => postId => () => {
-      push(`/comments/${postId}`)
+    goToComments: ({ history: { push } }) => post => () => {
+      push(`/comments/${post.id}`, {
+        post,
+      })
     },
   }),
 )(Posts)

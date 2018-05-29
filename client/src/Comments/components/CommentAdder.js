@@ -11,18 +11,15 @@ const CommentAdder = ({ postId }) => (
   <Mutation
     mutation={commentsMutations.ADD_COMMENT}
     update={(cache, { data: { addComment } }) => {
-      const { post } = cache.readQuery({
-        query: commentsQueries.GET_POST,
-        variables: { id: postId },
+      const { comments } = cache.readQuery({
+        query: commentsQueries.GET_COMMENTS,
+        variables: { postId },
       })
       cache.writeQuery({
-        query: commentsQueries.GET_POST,
-        variables: { id: postId },
+        query: commentsQueries.GET_COMMENTS,
+        variables: { postId },
         data: {
-          post: {
-            ...post,
-            comments: [...post.comments, addComment],
-          },
+          comments: [...comments, addComment],
         },
       })
     }}

@@ -11,7 +11,19 @@ export const GET_POST = gql`
         id
         content
         score
+        parentId
       }
+    }
+  }
+`
+
+export const GET_COMMENTS = gql`
+  query comments($postId: String) {
+    comments(postId: $postId) {
+      id
+      postId
+      content
+      score
     }
   }
 `

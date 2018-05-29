@@ -1,9 +1,11 @@
 import gql from 'graphql-tag'
 
 export const ADD_COMMENT = gql`
-  mutation addComment($postId: String, $content: String) {
-    addComment(postId: $postId, content: $content) {
+  mutation addComment($postId: String, $parentId: String, $content: String) {
+    addComment(postId: $postId, parentId: $parentId, content: $content) {
       id
+      postId
+      parentId
       content
       score
     }

@@ -23,12 +23,13 @@ const typeDefs = `
   type Query {
     posts: [Post],
     post(id: String!): Post
+    comments(postId: String): [Comment]
   }
   type Mutation {
     addPost(input: PostInput): Post
     ratePost(id: String!, rating: Int): Post
     deletePost(id: String): Post
-    addComment(postId: String, content: String): Comment
+    addComment(postId: String,  parentId: String, content: String): Comment
     rateComment(postId: String, commentId: String, rating: Int): Post
   }
   type Post {
@@ -41,6 +42,8 @@ const typeDefs = `
   }
   type Comment {
     id: String,
+    postId: String,
+    parentId: String,
     content: String,
     score: Int,
   }
@@ -56,6 +59,10 @@ const resolvers = {
     posts: async () => {
       const Posts = global.DB.collection('posts')
       return await Posts.find({}).toArray()
+    },
+    comments: async (_, { postId }) => {
+      const comments = global.DB.collection('comments')
+      return await comments.find({ postId }).toArray()
     },
     post: async (_, { id }) => {
       const Posts = global.DB.collection('posts')
@@ -91,24 +98,21 @@ const resolvers = {
       const posts = global.DB.collection('posts')
       return await posts.findAndRemove({ id })
     },
-    addComment: async (_, { postId, content }) => {
-      const posts = global.DB.collection('posts')
-      const newComment = {
+    addComment: async (_, { postId, parentId, content }) => {
+      console.log('adding comment: ', postId, parentId, content)
+      const comments = global.DB.collection('comments')
+
+      const newComment = await comments.insertOne({
         id: uuid(),
+        postId,
+        parentId,
         content,
         score: 0,
-      }
-      const updatedPost = await posts.findOneAndUpdate(
-        { id: postId },
-        {
-          $push: { comments: newComment },
-        },
-        { returnOriginal: false },
-      )
-      return newComment
+      })
+      return newComment.ops[0]
     },
     rateComment: async (_, { postId, commentId, rating }) => {
-      const posts = global.DB.collection('posts')
+      const comments = global.DB.collection('comments')
       const theComment = await posts.findOneAndUpdate(
         {
           id: postId,

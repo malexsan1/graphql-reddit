@@ -9,28 +9,32 @@ const Comments = ({
   history: { goBack },
   match: {
     params: { postId },
+    ...altceva
   },
-}) => (
-  <Query query={commentsQueries.GET_POST} variables={{ id: postId }}>
-    {({ loading, data: { post } }) => {
-      return loading ? (
-        'Loading...'
-      ) : (
-        <Root>
-          <Header>
-            <BackButton onClick={goBack}>Go back</BackButton>
-            <Title>{post.title}</Title>
-          </Header>
-          <Description>{post.description}</Description>
-          <CommentAdder postId={post.id} />
-          {post.comments.map(c => (
-            <Comment key={c.id} postId={postId} {...c} />
-          ))}
-        </Root>
-      )
-    }}
-  </Query>
-)
+  location: {
+    state: { post },
+  },
+}) => {
+  return (
+    <Query query={commentsQueries.GET_COMMENTS} variables={{ postId }}>
+      {({ loading, data: { comments } }) => {
+        return loading ? (
+          'Loading...'
+        ) : (
+          <Root>
+            <Header>
+              <BackButton onClick={goBack}>Go back</BackButton>
+              <Title>{post.title}</Title>
+            </Header>
+            <Description>{post.description}</Description>
+            <CommentAdder postId={post.id} />
+            {comments.map(c => <Comment key={c.id} postId={postId} {...c} />)}
+          </Root>
+        )
+      }}
+    </Query>
+  )
+}
 
 export default Comments
 
