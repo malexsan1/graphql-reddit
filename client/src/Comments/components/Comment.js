@@ -22,8 +22,8 @@ const Comment = ({ postId, id, content, score, rateComment }) => (
 )
 
 export default withHandlers({
-  rateComment: ({ postId, id: commentId }) => (mutateFn, rating = 1) => () => {
-    mutateFn({ variables: { commentId, postId, rating } })
+  rateComment: ({ id: commentId }) => (mutateFn, rating = 1) => () => {
+    mutateFn({ variables: { commentId, rating } })
   },
 })(Comment)
 

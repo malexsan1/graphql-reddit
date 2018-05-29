@@ -29,8 +29,8 @@ const typeDefs = `
     addPost(input: PostInput): Post
     ratePost(id: String!, rating: Int): Post
     deletePost(id: String): Post
-    addComment(postId: String,  parentId: String, content: String): Comment
-    rateComment(postId: String, commentId: String, rating: Int): Post
+    addComment(postId: String, parentId: String, content: String): Comment
+    rateComment(commentId: String, rating: Int): Comment
   }
   type Post {
     id: String,
@@ -111,21 +111,20 @@ const resolvers = {
       })
       return newComment.ops[0]
     },
-    rateComment: async (_, { postId, commentId, rating }) => {
+    rateComment: async (_, { commentId, rating }) => {
       const comments = global.DB.collection('comments')
-      const theComment = await posts.findOneAndUpdate(
+      const comment = await comments.findOneAndUpdate(
         {
-          id: postId,
-          'comments.id': commentId,
+          id: commentId,
         },
         {
-          $inc: { 'comments.$.score': rating },
+          $inc: { score: rating },
         },
         {
           returnOriginal: false,
         },
       )
-      return theComment.value
+      return comment.value
     },
   },
 }

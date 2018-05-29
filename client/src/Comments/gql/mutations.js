@@ -13,17 +13,13 @@ export const ADD_COMMENT = gql`
 `
 
 export const RATE_COMMENT = gql`
-  mutation rateComment($postId: String, $commentId: String, $rating: Int) {
-    rateComment(postId: $postId, commentId: $commentId, rating: $rating) {
+  mutation rateComment($commentId: String, $rating: Int) {
+    rateComment(commentId: $commentId, rating: $rating) {
       id
-      title
-      description
+      postId
+      parentId
+      content
       score
-      comments {
-        id
-        content
-        score
-      }
     }
   }
 `
