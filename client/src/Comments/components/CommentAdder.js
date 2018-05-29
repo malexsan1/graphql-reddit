@@ -7,7 +7,7 @@ import { commentsMutations, commentsQueries } from '../gql'
 import { FormTextArea, FormElements, FormContainer } from '../../FormItems'
 const { Row, RowItem } = FormElements
 
-const CommentAdder = ({ postId }) => (
+const CommentAdder = ({ postId, parentId }) => (
   <Mutation
     mutation={commentsMutations.ADD_COMMENT}
     update={(cache, { data: { addComment } }) => {
@@ -27,7 +27,7 @@ const CommentAdder = ({ postId }) => (
     {mutateFn => (
       <Form
         onSubmit={({ comment: content }, { reset }) => {
-          mutateFn({ variables: { postId, content } })
+          mutateFn({ variables: { postId, parentId, content } })
           reset()
         }}
         validate={({ comment }) => {

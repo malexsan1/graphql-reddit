@@ -9,7 +9,6 @@ const Comments = ({
   history: { goBack },
   match: {
     params: { postId },
-    ...altceva
   },
   location: {
     state: { post },
@@ -18,6 +17,16 @@ const Comments = ({
   return (
     <Query query={commentsQueries.GET_COMMENTS} variables={{ postId }}>
       {({ loading, data: { comments } }) => {
+        const mappedComments =
+          !loading &&
+          comments.reduce((acc, el) => {
+            return el.parentId
+              ? acc.map(
+                  c => (c.id === el.parentId ? { ...c, children: [el] } : c),
+                )
+              : [...acc, el]
+          }, [])
+        console.log('the mapped comments', mappedComments)
         return loading ? (
           'Loading...'
         ) : (

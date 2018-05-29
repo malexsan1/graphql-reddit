@@ -22,6 +22,7 @@ export const GET_COMMENTS = gql`
     comments(postId: $postId) {
       id
       postId
+      parentId
       content
       score
     }
