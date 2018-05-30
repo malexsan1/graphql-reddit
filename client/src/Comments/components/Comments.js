@@ -1,9 +1,9 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Query } from 'react-apollo'
+import styled from 'styled-components'
 
 import { commentsQueries } from '../gql'
-import { CommentAdder, Comment } from './'
+import { CommentAdder, Comment, CommentThread } from './'
 
 const Comments = ({
   history: { goBack },
@@ -16,17 +16,20 @@ const Comments = ({
 }) => {
   return (
     <Query query={commentsQueries.GET_COMMENTS} variables={{ postId }}>
-      {({ loading, data: { comments } }) => {
-        const mappedComments =
-          !loading &&
-          comments.reduce((acc, el) => {
-            return el.parentId
-              ? acc.map(
-                  c => (c.id === el.parentId ? { ...c, children: [el] } : c),
-                )
-              : [...acc, el]
-          }, [])
-        console.log('the mapped comments', mappedComments)
+      {({ loading, data: { comments = [] } }) => {
+        const { parents, childComments } = comments.reduce(
+          (acc, el) =>
+            el.parentId
+              ? {
+                  ...acc,
+                  childComments: [...acc.childComments, el],
+                }
+              : {
+                  ...acc,
+                  parents: [...acc.parents, el],
+                },
+          { parents: [], childComments: [] },
+        )
         return loading ? (
           'Loading...'
         ) : (
@@ -37,7 +40,12 @@ const Comments = ({
             </Header>
             <Description>{post.description}</Description>
             <CommentAdder postId={post.id} />
-            {comments.map(c => <Comment key={c.id} postId={postId} {...c} />)}
+            <CommentThread
+              isRoot
+              comments={childComments}
+              postId={postId}
+              rootComments={parents}
+            />
           </Root>
         )
       }}

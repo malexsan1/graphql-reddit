@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { Mutation } from 'react-apollo'
 import { compose, withHandlers, withState } from 'recompose'
 
-import { CommentAdder } from './'
 import { commentsMutations } from '../gql'
 import { Rating } from '../../UIComponents'
+import { CommentAdder, CommentThread } from './'
 
 const Comment = ({
   id,
@@ -13,30 +13,43 @@ const Comment = ({
   postId,
   content,
   hasReply,
+  children,
   rateComment,
   toggleReply,
-}) => (
-  <Mutation mutation={commentsMutations.RATE_COMMENT}>
-    {mutateFn => (
-      <Root>
-        <Row>
-          <Rating
-            rating={score}
-            onIncrement={rateComment(mutateFn, 1)}
-            onDecrement={rateComment(mutateFn, -1)}
+  //
+  comments,
+  subComments,
+}) => {
+  return (
+    <Mutation mutation={commentsMutations.RATE_COMMENT}>
+      {mutateFn => (
+        <Root>
+          <Row>
+            <Rating
+              rating={score}
+              onIncrement={rateComment(mutateFn, 1)}
+              onDecrement={rateComment(mutateFn, -1)}
+            />
+            <Content>{content}</Content>
+          </Row>
+          <Row>
+            <button onClick={toggleReply}>
+              {hasReply ? 'Cancel' : 'Reply'}
+            </button>
+          </Row>
+          {hasReply && <CommentAdder postId={postId} parentId={id} />}
+          <CommentThread
+            comments={comments}
+            postId={postId}
+            rootComments={subComments}
           />
-          <Content>{content}</Content>
-        </Row>
-        <Row>
-          <button onClick={toggleReply}>{hasReply ? 'Cancel' : 'Reply'}</button>
-        </Row>
-        {hasReply && <CommentAdder postId={postId} parentId={id} />}
-      </Root>
-    )}
-  </Mutation>
-)
+        </Root>
+      )}
+    </Mutation>
+  )
+}
 
-export default compose(
+const EnhancedComment = compose(
   withState('hasReply', 'setReply', false),
   withHandlers({
     rateComment: ({ id: commentId }) => (mutateFn, rating = 1) => () => {
@@ -45,6 +58,8 @@ export default compose(
     toggleReply: ({ setReply }) => () => setReply(v => !v),
   }),
 )(Comment)
+
+export default EnhancedComment
 
 // #region styled-components
 const Content = styled.span`
@@ -67,7 +82,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: 3px 0;
+  margin: 20px 0;
   padding: 5px;
 `
 // #endregion
