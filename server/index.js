@@ -142,9 +142,12 @@ app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }))
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
 
-MongoClient.connect(mongoURL, (err, client) => {
-  global.DB = client.db('reddit-clone')
-  app.listen(3001, () => {
-    console.log('Server listening on port 3001!')
-  })
-})
+MongoClient.connect(
+  mongoURL,
+  (err, client) => {
+    global.DB = client.db('reddit-clone')
+    app.listen(3001, () => {
+      console.log('Server listening on port 3001!')
+    })
+  },
+)
