@@ -7,7 +7,7 @@ const Post = ({ id, title, score, goToComments }) => (
   <Root>
     <PostScore id={id} score={score} />
     <Text>{title}</Text>
-    <button onClick={goToComments}>Go to comments</button>
+    <BackButton onClick={goToComments}>Go to comments</BackButton>
   </Root>
 )
 export default Post
@@ -28,5 +28,20 @@ const Root = styled.div`
   justify-content: flex-start;
   margin-bottom: 10px;
   padding: 6px;
+`
+
+const BackButton = styled.button`
+  background-color: #eee;
+  border: none;
+  border-radius: 2px;
+  color: #444;
+  height: 28px;
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+  padding: 0 5px;
+
+  &:hover {
+    background-color: #ccc;
+  }
 `
 // #endregion

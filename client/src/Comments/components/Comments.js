@@ -3,7 +3,7 @@ import { Query } from 'react-apollo'
 import styled from 'styled-components'
 
 import { commentsQueries } from '../gql'
-import { CommentAdder, Comment, CommentThread } from './'
+import { CommentAdder, CommentThread } from './'
 
 const Comments = ({
   history: { goBack },
@@ -91,7 +91,7 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: 30px;
 `
 
 const Root = styled.div`

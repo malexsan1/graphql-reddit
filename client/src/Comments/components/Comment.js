@@ -33,9 +33,9 @@ const Comment = ({
             <Content>{content}</Content>
           </Row>
           <Row>
-            <button onClick={toggleReply}>
+            <BackButton onClick={toggleReply}>
               {hasReply ? 'Cancel' : 'Reply'}
-            </button>
+            </BackButton>
           </Row>
           {hasReply && <CommentAdder postId={postId} parentId={id} />}
           <CommentThread
@@ -84,5 +84,20 @@ const Root = styled.div`
   justify-content: flex-start;
   margin: 20px 0;
   padding: 5px;
+`
+
+const BackButton = styled.button`
+  background-color: #eee;
+  border: none;
+  border-radius: 2px;
+  color: #444;
+  height: 28px;
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+  padding: 0 5px;
+
+  &:hover {
+    background-color: #ccc;
+  }
 `
 // #endregion

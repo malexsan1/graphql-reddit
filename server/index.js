@@ -1,27 +1,15 @@
-const express = require('express')
-const cors = require('cors')
 const uuid = require('uuid').v4
-const bodyParser = require('body-parser')
-const MongoClient = require('mongodb').MongoClient
-const { makeExecutableSchema } = require('graphql-tools')
-const { graphiqlExpress, graphqlExpress } = require('apollo-server-express')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { ApolloServer, gql } = require('apollo-server')
 
+const MongoClient = require('mongodb').MongoClient
+const config = require('./config')
 const mongoURL = `mongodb://malexsan:password@ds251179.mlab.com:51179/reddit-clone`
 
-const posts = [
-  {
-    title: 'Learn React',
-    author: 'Alexandru Munteanu',
-  },
-  {
-    title: 'Learn GraphQL',
-    author: 'Alexandru Munteanu',
-  },
-]
-
-const typeDefs = `
+const typeDefs = gql`
   type Query {
-    posts: [Post],
+    posts: [Post]
     post(id: String!): Post
     comments(postId: String): [Comment]
   }
@@ -31,27 +19,39 @@ const typeDefs = `
     deletePost(id: String): Post
     addComment(postId: String, parentId: String, content: String): Comment
     rateComment(commentId: String, rating: Int): Comment
+    signUpUser(input: SignUpInput): UserPayload
+  }
+  input SignUpInput {
+    email: String
+    password: String
+    confirmPassword: String
+  }
+  type UserPayload {
+    id: String
+    email: String
+    token: String
   }
   type Post {
-    id: String,
-    title: String,
-    description: String,
-    score: Int,
-    comments: [Comment],
-    url: String,
+    id: String
+    title: String
+    description: String
+    score: Int
+    comments: [Comment]
+    url: String
   }
   type Comment {
-    id: String,
-    postId: String,
-    parentId: String,
-    content: String,
-    score: Int,
+    id: String
+    postId: String
+    parentId: String
+    content: String
+    score: Int
   }
   input PostInput {
-    title: String,
-    description: String,
-    url: String,
+    title: String
+    description: String
+    url: String
   }
+
 `
 
 const resolvers = {
@@ -126,28 +126,46 @@ const resolvers = {
       )
       return comment.value
     },
+    signUpUser: async (_, { input: { email, password } }) => {
+      const users = global.DB.collection('users')
+
+      if (await users.findOne({ email })) {
+        throw new Error(`Email is already being used.`)
+      }
+
+      const hash = await bcrypt.hash(password, 5)
+      const id = uuid()
+      const token = jwt.sign({ id, email }, config.TOKEN_SECRET, {
+        expiresIn: config.TOKEN_LIFE,
+      })
+      const newUser = await users.insertOne({
+        id,
+        email,
+        token,
+      })
+      return newUser.ops[0]
+    },
   },
 }
 
-const schema = makeExecutableSchema({
+const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const reqToken = req.headers.authorization.split(' ')[1]
+    const { iat, exp, ...user } = jwt.verify(reqToken, config.TOKEN_SECRET)
+    return {
+      user,
+    }
+  },
 })
-
-// init the app
-const app = express()
-app.use(cors())
-
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }))
-
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
 
 MongoClient.connect(
   mongoURL,
   (err, client) => {
     global.DB = client.db('reddit-clone')
-    app.listen(3001, () => {
-      console.log('Server listening on port 3001!')
+    server.listen().then(({ url }) => {
+      console.log(`Server ready on ${url}.`)
     })
   },
 )

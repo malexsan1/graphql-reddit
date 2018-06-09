@@ -8,11 +8,9 @@ import { postsQueries } from '../gql'
 
 const Posts = ({ goToAddPost, goToComments }) => (
   <Fragment>
-    <div>
-      <button onClick={goToAddPost}>Add post</button>
-    </div>
+    <BackButton onClick={goToAddPost}>Add post</BackButton>
     <Query query={postsQueries.GET_POSTS}>
-      {({ data: { posts }, loading }) => {
+      {({ data: { posts = [] }, loading }) => {
         return loading ? (
           'Loading...'
         ) : (
@@ -41,6 +39,22 @@ export default compose(
 )(Posts)
 
 // #region styled-components
+const BackButton = styled.button`
+  background-color: #eee;
+  border: none;
+  border-radius: 2px;
+  color: #444;
+  height: 28px;
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+  margin: 10px;
+  padding: 0 5px;
+
+  &:hover {
+    background-color: #ccc;
+  }
+`
+
 const PostsContainer = styled.div`
   align-items: stretch;
   display: flex;
