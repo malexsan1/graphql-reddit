@@ -2,7 +2,7 @@ const { gql } = require('apollo-server')
 
 module.exports = gql`
   extend type Query {
-    posts: [Post]
+    posts(subreddit: String): [Post]
     post(id: String!): Post
   }
 
@@ -25,6 +25,7 @@ module.exports = gql`
     title: String
     description: String
     url: String
+    subreddit: String
   }
 
 `

@@ -2,8 +2,17 @@ const uuid = require('uuid').v4
 
 module.exports = {
   Query: {
-    posts: async () => {
+    posts: async (_, { subreddit }) => {
       const Posts = global.DB.collection('posts')
+      const Subreddits = global.DB.collection('subreddits')
+
+      if (subreddit) {
+        const { id: subredditId } = await Subreddits.findOne({
+          name: subreddit,
+        })
+        return await Posts.find({ subreddit: subredditId }).toArray()
+      }
+
       return await Posts.find({}).toArray()
     },
     post: async (_, { id }) => {

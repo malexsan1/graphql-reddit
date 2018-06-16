@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_POSTS = gql`
-  {
-    posts {
+  query posts($subreddit: String) {
+    posts(subreddit: $subreddit) {
       id
       title
       description

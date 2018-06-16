@@ -8,8 +8,9 @@ const config = require('./config')
 const MongoClient = require('mongodb').MongoClient
 const mongoURL = `mongodb://malexsan:password@ds251179.mlab.com:51179/reddit-clone`
 
-const posts = require('./posts')
-const comments = require('./comments')
+const posts = require('./src/posts')
+const comments = require('./src/comments')
+const subreddits = require('./src/subreddits')
 
 const typeDefs = [
   gql`
@@ -19,6 +20,7 @@ const typeDefs = [
   `,
   posts.schema,
   comments.schema,
+  subreddits.schema,
   gql`
     extend type Mutation {
       signUpUser(input: SignUpInput): UserPayload
@@ -37,7 +39,12 @@ const typeDefs = [
   `,
 ]
 
-const resolvers = merge({}, posts.resolvers, comments.resolvers)
+const resolvers = merge(
+  {},
+  posts.resolvers,
+  comments.resolvers,
+  subreddits.resolvers,
+)
 
 const server = new ApolloServer({
   typeDefs,

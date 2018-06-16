@@ -5,18 +5,30 @@ import { compose, withHandlers } from 'recompose'
 
 import { Post } from './'
 import { postsQueries } from '../gql'
+import { Subreddits } from '../../Subreddits/components'
 
-const Posts = ({ goToAddPost, goToComments }) => (
+const Posts = ({
+  goTo,
+  match: {
+    params: { subreddit },
+  },
+}) => (
   <Fragment>
-    <BackButton onClick={goToAddPost}>Add post</BackButton>
-    <Query query={postsQueries.GET_POSTS}>
+    <Subreddits />
+    <Button onClick={goTo('/create-subreddit')}>Create subreddit</Button>
+    <Button onClick={goTo('/add-post')}>Add post</Button>
+    <Query query={postsQueries.GET_POSTS} variables={{ subreddit }}>
       {({ data: { posts = [] }, loading }) => {
         return loading ? (
           'Loading...'
         ) : (
           <PostsContainer>
             {posts.map(p => (
-              <Post goToComments={goToComments(p)} key={p.id} {...p} />
+              <Post
+                goToComments={goTo(`/comments/${p.id}`, { post: p })}
+                key={p.id}
+                {...p}
+              />
             ))}
           </PostsContainer>
         )
@@ -27,19 +39,14 @@ const Posts = ({ goToAddPost, goToComments }) => (
 
 export default compose(
   withHandlers({
-    goToAddPost: ({ history: { push } }) => () => {
-      push(`/add-post`)
-    },
-    goToComments: ({ history: { push } }) => post => () => {
-      push(`/comments/${post.id}`, {
-        post,
-      })
+    goTo: ({ history: { push } }) => (to, routeState = {}) => () => {
+      push(to, routeState)
     },
   }),
 )(Posts)
 
 // #region styled-components
-const BackButton = styled.button`
+const Button = styled.button`
   background-color: #eee;
   border: none;
   border-radius: 2px;

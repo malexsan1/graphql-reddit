@@ -1,9 +1,10 @@
 import React from 'react'
-import { Mutation } from 'react-apollo'
+import { Mutation, Query } from 'react-apollo'
 import { Form, Field } from 'react-final-form'
 import { compose, withHandlers, setDisplayName } from 'recompose'
 
 import { postsMutations, postsQueries } from '../gql'
+import { subredditQueries } from '../../Subreddits/gql'
 
 import {
   FormButtons,
@@ -12,29 +13,36 @@ import {
   FormTextInput,
   FormContainer,
 } from '../../FormItems'
-const { Row, RowItem } = FormElements
+const { Row, RowItem, Label, ErrorText, FieldRoot } = FormElements
 
 const PostAdder = ({ addPost }) => (
   <Mutation
     mutation={postsMutations.ADD_POST}
     update={(cache, { data: { addPost: updateData } }) => {
-      const { posts } = cache.readQuery({ query: postsQueries.GET_POSTS })
+      const { posts } = cache.readQuery({
+        query: postsQueries.GET_POSTS,
+        variables: { subreddit: undefined },
+      })
       cache.writeQuery({
         query: postsQueries.GET_POSTS,
         data: { posts: [...posts, updateData] },
+        variables: { subreddit: undefined },
       })
     }}
   >
     {mutateFn => (
       <Form
         onSubmit={addPost(mutateFn)}
-        validate={({ title, url }) => {
+        validate={({ title, subreddit, url }) => {
           const urlRegex = new RegExp(
             /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi,
           )
           const errors = {}
           if (!title) {
             errors.title = 'Required'
+          }
+          if (!subreddit) {
+            errors.subreddit = 'Required'
           }
           if (!!url && !urlRegex.test(url)) {
             errors.url = 'Invalid url'
@@ -66,6 +74,13 @@ const PostAdder = ({ addPost }) => (
                 </Field>
               </RowItem>
             </Row>
+            <Row>
+              <RowItem>
+                <Field name="subreddit">
+                  {formField => <SubredditPicker {...formField} />}
+                </Field>
+              </RowItem>
+            </Row>
             <FormButtons reset={reset} />
           </FormContainer>
         )}
@@ -74,16 +89,40 @@ const PostAdder = ({ addPost }) => (
   </Mutation>
 )
 
+const SubredditPicker = ({
+  meta: { error, touched },
+  input: { onChange, value },
+}) => (
+  <Query query={subredditQueries.GET_SUBREDDITS}>
+    {({ data: { subreddits = [] } }) => {
+      return (
+        <FieldRoot>
+          <Label>Subreddit</Label>
+          <select onChange={onChange} value={value}>
+            {value === '' && <option value="" />}
+            {subreddits.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <ErrorText hasError={error && touched}>{error}</ErrorText>
+        </FieldRoot>
+      )
+    }}
+  </Query>
+)
+
 export default compose(
   setDisplayName('PostAdder'),
   withHandlers({
-    addPost: () => addFn => (input, { reset }) => {
+    addPost: ({ history }) => addFn => input => {
       addFn({
         variables: {
           input,
         },
       })
-      reset()
+      history.goBack()
     },
   }),
 )(PostAdder)
