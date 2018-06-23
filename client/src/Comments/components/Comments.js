@@ -2,7 +2,7 @@ import React from 'react'
 import { Query } from 'react-apollo'
 import styled from 'styled-components'
 
-import { commentsQueries } from '../gql'
+import { postsQueries } from '../../Posts/gql'
 import { CommentAdder, CommentThread } from './'
 
 const Comments = ({
@@ -10,14 +10,11 @@ const Comments = ({
   match: {
     params: { postId },
   },
-  location: {
-    state: { post },
-  },
 }) => {
   return (
-    <Query query={commentsQueries.GET_COMMENTS} variables={{ postId }}>
-      {({ loading, data: { comments = [] } }) => {
-        const { parents, childComments } = comments.reduce(
+    <Query query={postsQueries.GET_POST} variables={{ id: postId }}>
+      {({ loading, data: { post = { comments: [] } } }) => {
+        const { parents, childComments } = post.comments.reduce(
           (acc, el) =>
             el.parentId
               ? {
@@ -30,6 +27,7 @@ const Comments = ({
                 },
           { parents: [], childComments: [] },
         )
+        // console.log('comments -> ', data)
         return loading ? (
           'Loading...'
         ) : (

@@ -11,3 +11,20 @@ export const GET_POSTS = gql`
     }
   }
 `
+
+export const GET_POST = gql`
+  query post($id: String!) {
+    post(id: $id) {
+      id
+      title
+      description
+      score
+      comments {
+        id
+        content
+        score
+        parentId
+      }
+    }
+  }
+`

@@ -13,7 +13,7 @@ const App = () => (
     <Route path="/add-post" component={PostAdder} />
     <Route path="/sign-up" component={SignUp} />
     <Route path="/comments/:postId" component={Comments} />
-    <Route path="/create-subreddit" component={CreateSubreddit} />
+    <Route path="/create-subreddit" component={CreateSubreddit} /> 
   </Fragment>
 )
 

@@ -16,6 +16,7 @@ module.exports = gql`
     id: String
     title: String
     description: String
+    subreddit: Subreddit
     score: Int
     comments: [Comment]
     url: String

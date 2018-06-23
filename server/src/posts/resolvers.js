@@ -17,7 +17,8 @@ module.exports = {
     },
     post: async (_, { id }) => {
       const Posts = global.DB.collection('posts')
-      return await Posts.findOne({ id })
+      const post = await Posts.findOne({ id })
+      return post
     },
   },
   Mutation: {
@@ -48,6 +49,16 @@ module.exports = {
     deletePost: async (_, { id }) => {
       const posts = global.DB.collection('posts')
       return await posts.findAndRemove({ id })
+    },
+  },
+  Post: {
+    comments: async post => {
+      const Comments = global.DB.collection('comments')
+      return await Comments.find({ postId: post.id }).toArray()
+    },
+    subreddit: async post => {
+      const Subreddits = global.DB.collection('subreddits')
+      return Subreddits.findOne({ id: post.subreddit })
     },
   },
 }

@@ -4,7 +4,7 @@ import { ApolloProvider } from 'react-apollo'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloLink } from 'apollo-link'
-import { setContext } from 'apollo-link-context'
+// import { setContext } from 'apollo-link-context'
 import { createHttpLink } from 'apollo-link-http'
 import { ApolloClient, InMemoryCache } from 'apollo-client-preset'
 
